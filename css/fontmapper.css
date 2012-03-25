@@ -1,0 +1,73 @@
+
+
+h1
+{
+	font-size: 14px;
+}
+a, img
+{
+	border: none;
+}
+.canvaswrap
+{
+	background-image: url("../images/grid.png");
+	width: 512px;
+	height: 512px;
+	float: left;
+}
+.fg-button { 
+   outline: 0; 
+   margin:0 4px 0 0; 
+   padding: .4em 1em; 
+   text-decoration:none !important; 
+   cursor:pointer; 
+   position: relative; 
+   text-align: center; 
+   zoom: 1; 
+   }
+.invisiblecanvas
+{
+	display: none;
+}
+
+.control, .widecontrol
+{
+	width: 100px;
+	height: 30px;
+	float: left;
+	font-family: Arial;
+	font-size: 10px;
+}
+.widecontrol
+{
+	width: 200px;
+	float: left;
+	height: 30px;
+}
+
+.controls
+{
+	width: 220px;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.4);	
+	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#aaa)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #ddd,  #aaa); /* for firefox 3.6+ */	
+
+	background-color: #ddd;
+	float: left;
+	padding: 4px;
+	color: black;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;	
+}
+.subcontrols
+{
+	border: 1px solid black;
+	padding: 4px;	
+}
+.upload
+{
+	color: white;	
+}
+
