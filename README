@@ -1,0 +1,8 @@
+FontMapper is a tool that maps characters from a TTF font to a bitmap.
+This bitmap can then be loaded in a graphics engine to display fancy text.
+Currently it offers 2 save-modes: a generic XML descriptor along with the bitmap,
+or an irrlicht(http://irrlicht.sf.net) compatible XML descriptor along with the bitmap.
+
+To see it in action, or simply to use it, visit:
+
+http://dev138.info/fontmapper/
