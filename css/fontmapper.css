@@ -1,6 +1,22 @@
+body {
+    margin: 0;
+    background-image: url("../images/grid.png");
+}
+
+canvas {
+    position: relative;
+/*    width: 100%;
+    height: 100%;*/
+    margin: 16px;
+    width: 512px;
+    height: 512px;
+    border: 1px solid black;
+    box-shadow: 0 0 32px black;
+    background-color: rgba(255, 255, 255, 0.3);
+}
 
 
-h1
+/*h1
 {
 	font-size: 14px;
 }
@@ -50,8 +66,8 @@ a, img
 	width: 220px;
 	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.4);	
-	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#aaa)); /* for webkit browsers */
-	background: -moz-linear-gradient(top,  #ddd,  #aaa); /* for firefox 3.6+ */	
+	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#aaa));
+	background: -moz-linear-gradient(top,  #ddd,  #aaa); 
 
 	background-color: #ddd;
 	float: left;
@@ -70,4 +86,4 @@ a, img
 {
 	color: white;	
 }
-
+*/
