@@ -16,7 +16,7 @@ var FontMapper = function() {
         shadowBlur : 4,
         shadowColor : '#000000'
     };
-
+    var lastFont = "Arial";
     var canvas = document.getElementsByTagName("canvas")[0];
     var context = canvas.getContext("2d");
 
@@ -27,9 +27,14 @@ var FontMapper = function() {
     var context2 = canvas2.getContext("2d");
 
     var pixeldata;
-
+    var charRects = [];
     canvas2.width = 128;
     canvas2.height = 128;
+
+    var loadFont = function(name, data) {
+        var style = "<style type='text/css'>@font-face { font-family: " + name + "; src: url('" + data + "'); }</style>";
+        document.head.innerHTML += style;
+    };
     var measureCharacter = function(character) {
         canvas2.width = canvas2.width;
         context2.textBaseline = 'top';
@@ -77,10 +82,14 @@ var FontMapper = function() {
         return character;
     };
     var render = function() {
-        var charRects = [];
+        if(lastFont !== font.face && localStorage[font.face]) {
+            loadFont(font.face, localStorage[font.face]);
+            font.data = localStorage[font.face];
+            lastFont = font.face;
+        }
         canvas.width = canvas.width; //clear canvas and context settings
         fontline = font.weight + ' ' + font.size + 'pt "' + font.face + '"';
-
+        charRects = [];
         context.textBaseline = 'top';
         context.font = fontline;
         context.textAlign = 'left';
@@ -143,16 +152,67 @@ var FontMapper = function() {
     canvas.addEventListener("drop", function(e) {
         e.stopPropagation();
         e.preventDefault();
-        alert("dropped... font?");
+        //alert("dropped... font?");
+        var files = e.dataTransfer.files;
+        if(files.length > 1) {
+            alert("One font at a time please");
+            return false;
+        }
+        var fontFile = files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var data = e.target.result;
+            font.data = data;
+            font.face = fontFile.name.replace(".ttf", "");
+            localStorage[font.face] = font.data;
+            loadFont(font.face, font.data);
+            if(fontMapper.onFontChange) {
+                fontMapper.onFontChange();
+            }
+        };
+        reader.readAsDataURL(fontFile);
         return false;
-    });
-    return {
+    }, false);
+    canvas.addEventListener("dragover", function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    }, false);
+
+
+    xmlEscape = function(chr) {
+        switch(chr) {
+            case '"': return ("&quot;");
+            case '&': return ("&amp;");
+            case '<': return ("&lt;");
+            case '>': return ("&gt;");
+            default: return ("") + chr;
+        }
+    };
+
+    var fontMapper = {
         render: render,
         run: function() {},
         font: font,
-        irrlicht: function() { alert("export irr"); },
-        json: function() { alert("export json"); }
+        irrlicht: function() {
+            var xmlfile = '<?xml version="1.0"?>\n<font type="bitmap">\n\n\t<Texture index="0" filename="font.png" hasAlpha="true" />\n\n';
+            for(var i = 0; i < charRects.length; i ++)
+            {
+                xmlfile += '<c c="' + xmlEscape(charRects[i].c) + '" r="' + charRects[i].x + ', ' + charRects[i].y + ', ' + (charRects[i].width + charRects[i].x) + ', ' + (charRects[i].height + charRects[i].y) + '" />\n';
+            }
+            xmlfile += "</font>";
+            var data = canvas.toDataURL();
+            var zip = new JSZip();
+            var binData = atob(data.replace("data:image/png;base64,", ""));
+            zip.file("font.xml", xmlfile).file("font.png", binData, {binary: true});
+            var blob = zip.generate({type: "blob"});
+            window.location = window.URL.createObjectURL(blob);
+        },
+        json: function() {
+            alert(JSON.stringify(font));
+        }
     };
+    return fontMapper;
 };
 
 window.addEventListener("load", function() {
@@ -165,7 +225,7 @@ window.addEventListener("load", function() {
     gui.add(font, 'characterMap');
     gui.add(font, 'size', 4, 72);
     gui.add(font, 'weight', ['normal', 'bold']);
-    gui.add(font, 'face');
+    var fontFace = gui.add(font, 'face');
     gui.add(font, 'lineWidth', 0, 8);
     gui.addColor(font, 'strokeColor');
     gui.addColor(font, 'fillColor');
@@ -175,6 +235,9 @@ window.addEventListener("load", function() {
     gui.add(font, 'shadowOffsetY', 0, 16);
     gui.add(font, 'shadowBlur', 0, 16);
 
+    fontMapper.onFontChange = function() {
+        fontFace.updateDisplay();
+    };
     var exportFile = gui.addFolder("export");
     exportFile.add(fontMapper, "irrlicht");
     exportFile.add(fontMapper, "json");
